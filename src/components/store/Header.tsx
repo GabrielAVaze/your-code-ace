@@ -2,7 +2,7 @@ import { Search, Phone, User, ShoppingCart, LogOut, LogIn, ShoppingBag } from "l
 import { Input } from "@/components/ui/input";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { toast } from "sonner";
 import {
@@ -25,28 +25,42 @@ const Header = () => {
     navigate("/");
   };
 
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (search.trim()) {
+      navigate(`/?search=${encodeURIComponent(search.trim())}`);
+    }
+  };
+
+  const handleLogoClick = () => {
+    setSearch("");
+    navigate("/");
+  };
+
   return (
     <header className="sticky top-0 z-50 bg-primary text-primary-foreground">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
-        <Link to="/" className="shrink-0 text-2xl font-black tracking-tight">
+        <button onClick={handleLogoClick} className="shrink-0 text-2xl font-black tracking-tight hover:opacity-90 transition-opacity">
           SNEAKER<span className="text-accent">STORE</span>
-        </Link>
+        </button>
 
-        <div className="relative hidden flex-1 max-w-xl md:block">
+        <form onSubmit={handleSearch} className="relative hidden flex-1 max-w-xl md:flex items-center">
           <Input
             placeholder="O que você está buscando?"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="h-10 rounded-full border-0 bg-primary-foreground/10 pl-4 pr-10 text-primary-foreground placeholder:text-primary-foreground/50 focus-visible:ring-accent"
           />
-          <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-primary-foreground/60" />
-        </div>
+          <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2">
+            <Search className="h-4 w-4 text-primary-foreground/60 hover:text-accent transition-colors" />
+          </button>
+        </form>
 
         <nav className="flex items-center gap-5">
-          <Link to="/" className="hidden flex-col items-center text-xs hover:text-accent transition-colors lg:flex">
+          <button onClick={() => navigate("/")} className="hidden flex-col items-center text-xs hover:text-accent transition-colors lg:flex">
             <Phone className="h-5 w-5 mb-0.5" />
             Atendimento
-          </Link>
+          </button>
 
           {user ? (
             <DropdownMenu>
@@ -75,10 +89,10 @@ const Header = () => {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Link to="/login" className="hidden flex-col items-center text-xs hover:text-accent transition-colors lg:flex">
+            <button onClick={() => navigate("/login")} className="hidden flex-col items-center text-xs hover:text-accent transition-colors lg:flex">
               <LogIn className="h-5 w-5 mb-0.5" />
               Entrar
-            </Link>
+            </button>
           )}
 
           <button
