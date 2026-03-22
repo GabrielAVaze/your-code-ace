@@ -41,7 +41,7 @@ const Header = () => {
     <header className="sticky top-0 z-50 bg-primary text-primary-foreground">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
         <button onClick={handleLogoClick} className="shrink-0 text-2xl font-black tracking-tight hover:opacity-90 transition-opacity">
-          SNEAKER<span className="text-accent">STORE</span>
+          Cantinho do <span className="text-accent">Tenis</span>
         </button>
 
         <form onSubmit={handleSearch} className="relative hidden flex-1 max-w-xl md:flex items-center">

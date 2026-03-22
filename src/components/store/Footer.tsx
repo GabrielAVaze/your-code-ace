@@ -21,7 +21,7 @@ const Footer = () => {
           ))}
         </div>
         <div className="border-t border-primary-foreground/10 pt-6 text-center text-xs text-primary-foreground/50">
-          © {new Date().getFullYear()} SneakerStore. Todos os direitos reservados.
+          © {new Date().getFullYear()} Cantinho do Tenis. Todos os direitos reservados.
         </div>
       </div>
     </footer>

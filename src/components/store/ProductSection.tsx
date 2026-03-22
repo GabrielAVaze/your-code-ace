@@ -11,10 +11,16 @@ const ProductSection = ({ title, products }: Props) => {
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-12">
-      <h2 className="mb-8 text-center text-2xl font-bold md:text-3xl">{title}</h2>
+      <h2 className="mb-8 text-center text-2xl font-bold md:text-3xl animate-fade-up">{title}</h2>
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:gap-6">
-        {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
+        {products.map((product, index) => (
+          <div
+            key={product.id}
+            className="animate-fade-up"
+            style={{ animationDelay: `${index * 80}ms`, opacity: 0, animationFillMode: "forwards" }}
+          >
+            <ProductCard product={product} />
+          </div>
         ))}
       </div>
     </section>

@@ -6,34 +6,24 @@
   :root {
     --background: 0 0% 100%;
     --foreground: 0 0% 8%;
-
     --card: 0 0% 100%;
     --card-foreground: 0 0% 8%;
-
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 8%;
-
     --primary: 0 0% 8%;
     --primary-foreground: 0 0% 98%;
-
     --secondary: 45 20% 95%;
     --secondary-foreground: 0 0% 8%;
-
     --muted: 40 10% 94%;
     --muted-foreground: 0 0% 40%;
-
     --accent: 48 100% 50%;
     --accent-foreground: 0 0% 8%;
-
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 98%;
-
     --border: 0 0% 89%;
     --input: 0 0% 89%;
     --ring: 0 0% 8%;
-
     --radius: 0.5rem;
-
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 240 5.9% 10%;
@@ -47,28 +37,20 @@
   .dark {
     --background: 0 0% 5%;
     --foreground: 0 0% 95%;
-
     --card: 0 0% 8%;
     --card-foreground: 0 0% 95%;
-
     --popover: 0 0% 8%;
     --popover-foreground: 0 0% 95%;
-
     --primary: 0 0% 95%;
     --primary-foreground: 0 0% 8%;
-
     --secondary: 0 0% 14%;
     --secondary-foreground: 0 0% 95%;
-
     --muted: 0 0% 14%;
     --muted-foreground: 0 0% 60%;
-
     --accent: 48 100% 50%;
     --accent-foreground: 0 0% 8%;
-
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-
     --border: 0 0% 18%;
     --input: 0 0% 18%;
     --ring: 0 0% 80%;
@@ -91,6 +73,16 @@
     @apply bg-background text-foreground;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
+
+  /* Scroll suave */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Seleção de texto com cor do accent */
+  ::selection {
+    background-color: hsl(48 100% 50% / 0.3);
+  }
 }
 
 @layer utilities {
@@ -100,5 +92,89 @@
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+
+  /* Animação de entrada fade + slide up */
+  .animate-fade-up {
+    animation: fadeUp 0.5s ease forwards;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.4s ease forwards;
+  }
+
+  .animate-slide-in-right {
+    animation: slideInRight 0.3s ease forwards;
+  }
+
+  /* Delay classes */
+  .delay-100 { animation-delay: 100ms; }
+  .delay-200 { animation-delay: 200ms; }
+  .delay-300 { animation-delay: 300ms; }
+  .delay-400 { animation-delay: 400ms; }
+  .delay-500 { animation-delay: 500ms; }
+
+  /* Hover lift */
+  .hover-lift {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px -8px rgba(0,0,0,0.15);
+  }
+
+  /* Shimmer para loading */
+  .shimmer {
+    background: linear-gradient(90deg, hsl(var(--muted)) 25%, hsl(var(--border)) 50%, hsl(var(--muted)) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
