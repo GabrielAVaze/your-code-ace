@@ -5,12 +5,14 @@ import { useCart } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, CreditCard } from "lucide-react";
+import { ArrowLeft, CreditCard, Store, Truck } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
+import { useState } from "react";
 
 const Checkout = () => {
   const { items, totalPrice, clearCart } = useCart();
+  const [deliveryMethod, setDeliveryMethod] = useState<"delivery" | "pickup">("delivery");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,6 +51,51 @@ const Checkout = () => {
 
           <div className="grid gap-8 md:grid-cols-5">
             <form onSubmit={handleSubmit} className="space-y-5 md:col-span-3">
+              {/* Método de entrega */}
+              <div className="rounded-lg border p-5 space-y-4">
+                <h2 className="font-semibold">Método de entrega</h2>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <button
+                    type="button"
+                    onClick={() => setDeliveryMethod("delivery")}
+                    className={`flex items-center gap-3 rounded-lg border-2 p-4 text-left transition-all active:scale-[0.97] ${
+                      deliveryMethod === "delivery"
+                        ? "border-accent bg-accent/5"
+                        : "border-border hover:border-muted-foreground/30"
+                    }`}
+                  >
+                    <Truck className={`h-5 w-5 shrink-0 ${deliveryMethod === "delivery" ? "text-accent" : "text-muted-foreground"}`} />
+                    <div>
+                      <p className="text-sm font-medium">Entrega</p>
+                      <p className="text-xs text-muted-foreground">Receba no seu endereço</p>
+                    </div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDeliveryMethod("pickup")}
+                    className={`flex items-center gap-3 rounded-lg border-2 p-4 text-left transition-all active:scale-[0.97] ${
+                      deliveryMethod === "pickup"
+                        ? "border-accent bg-accent/5"
+                        : "border-border hover:border-muted-foreground/30"
+                    }`}
+                  >
+                    <Store className={`h-5 w-5 shrink-0 ${deliveryMethod === "pickup" ? "text-accent" : "text-muted-foreground"}`} />
+                    <div>
+                      <p className="text-sm font-medium">Retirar na loja</p>
+                      <p className="text-xs text-muted-foreground">Retire sem custo de frete</p>
+                    </div>
+                  </button>
+                </div>
+
+                {deliveryMethod === "pickup" && (
+                  <div className="rounded-md bg-muted/50 p-3 text-sm text-muted-foreground">
+                    <p className="font-medium text-foreground">Endereço para retirada:</p>
+                    <p>Rua Exemplo, 123 — Centro, São Paulo - SP</p>
+                    <p>Horário: Seg a Sáb, 9h às 18h</p>
+                  </div>
+                )}
+              </div>
+
               <div className="rounded-lg border p-5 space-y-4">
                 <h2 className="font-semibold">Dados pessoais</h2>
                 <div className="grid gap-3 sm:grid-cols-2">
@@ -71,27 +118,29 @@ const Checkout = () => {
                 </div>
               </div>
 
-              <div className="rounded-lg border p-5 space-y-4">
-                <h2 className="font-semibold">Endereço de entrega</h2>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <div>
-                    <Label htmlFor="cep">CEP</Label>
-                    <Input id="cep" required placeholder="00000-000" />
-                  </div>
-                  <div className="sm:col-span-2">
-                    <Label htmlFor="address">Endereço</Label>
-                    <Input id="address" required placeholder="Rua, número, complemento" />
-                  </div>
-                  <div>
-                    <Label htmlFor="city">Cidade</Label>
-                    <Input id="city" required placeholder="Cidade" />
-                  </div>
-                  <div>
-                    <Label htmlFor="state">Estado</Label>
-                    <Input id="state" required placeholder="UF" />
+              {deliveryMethod === "delivery" && (
+                <div className="rounded-lg border p-5 space-y-4">
+                  <h2 className="font-semibold">Endereço de entrega</h2>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div>
+                      <Label htmlFor="cep">CEP</Label>
+                      <Input id="cep" required placeholder="00000-000" />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <Label htmlFor="address">Endereço</Label>
+                      <Input id="address" required placeholder="Rua, número, complemento" />
+                    </div>
+                    <div>
+                      <Label htmlFor="city">Cidade</Label>
+                      <Input id="city" required placeholder="Cidade" />
+                    </div>
+                    <div>
+                      <Label htmlFor="state">Estado</Label>
+                      <Input id="state" required placeholder="UF" />
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
 
               <div className="rounded-lg border p-5 space-y-4">
                 <h2 className="flex items-center gap-2 font-semibold">
@@ -137,9 +186,15 @@ const Checkout = () => {
                     </div>
                   ))}
                 </div>
-                <div className="mt-4 border-t pt-4 flex justify-between text-lg font-bold">
-                  <span>Total</span>
-                  <span className="tabular-nums">R${totalPrice.toFixed(2).replace(".", ",")}</span>
+                <div className="mt-4 border-t pt-4 space-y-1">
+                  <div className="flex justify-between text-sm text-muted-foreground">
+                    <span>Frete</span>
+                    <span>{deliveryMethod === "pickup" ? "Grátis (retirada)" : "A calcular"}</span>
+                  </div>
+                  <div className="flex justify-between text-lg font-bold">
+                    <span>Total</span>
+                    <span className="tabular-nums">R${totalPrice.toFixed(2).replace(".", ",")}</span>
+                  </div>
                 </div>
               </div>
             </div>
