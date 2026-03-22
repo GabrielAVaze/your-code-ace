@@ -1,16 +1,51 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import Header from "@/components/store/Header";
+import CategoryNav from "@/components/store/CategoryNav";
+import HeroBanner from "@/components/store/HeroBanner";
+import ProductSection from "@/components/store/ProductSection";
+import CartDrawer from "@/components/store/CartDrawer";
+import Footer from "@/components/store/Footer";
+import { useProducts } from "@/contexts/ProductContext";
+import { useState } from "react";
 
-// IMPORTANT: Fully REPLACE this with your own code
-const PlaceholderIndex = () => {
-  // PLACEHOLDER: Replace this entire return statement with the user's app.
-  // The inline background color is intentionally not part of the design system.
+const Index = () => {
+  const { products } = useProducts();
+  const [category, setCategory] = useState("Início");
+
+  const featured = products.filter((p) => p.featured);
+  const bestSellers = products.filter((p) => p.bestSeller);
+
+  const filteredByBrand =
+    category === "Início" || category === "Todos os Produtos"
+      ? null
+      : products.filter((p) => p.brand.toLowerCase() === category.toLowerCase());
+
   return (
-    <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: '#fcfbf8' }}>
-      <img data-lovable-blank-page-placeholder="REMOVE_THIS" src="/placeholder.svg" alt="Your app will live here!" />
+    <div className="flex min-h-screen flex-col">
+      <Header />
+      <CategoryNav onCategoryChange={setCategory} />
+      {category === "Início" && <HeroBanner />}
+
+      <main className="flex-1">
+        {filteredByBrand ? (
+          <ProductSection title={category} products={filteredByBrand} />
+        ) : (
+          <>
+            <div id="destaques">
+              <ProductSection title="Destaques" products={featured} />
+            </div>
+            <ProductSection title="Os mais vendidos" products={bestSellers} />
+          </>
+        )}
+
+        {category === "Todos os Produtos" && (
+          <ProductSection title="Todos os Produtos" products={products} />
+        )}
+      </main>
+
+      <Footer />
+      <CartDrawer />
     </div>
   );
 };
-
-const Index = PlaceholderIndex;
 
 export default Index;
