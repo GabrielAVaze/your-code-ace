@@ -30,9 +30,9 @@ const Header = () => {
             <Phone className="h-5 w-5 mb-0.5" />
             Atendimento
           </Link>
-          <Link to="/admin" className="hidden flex-col items-center text-xs hover:text-accent transition-colors lg:flex">
+          <Link to="/" className="hidden flex-col items-center text-xs hover:text-accent transition-colors lg:flex">
             <User className="h-5 w-5 mb-0.5" />
-            Admin
+            Minha Conta
           </Link>
           <button
             onClick={() => setIsOpen(true)}
