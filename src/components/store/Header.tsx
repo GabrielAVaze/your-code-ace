@@ -1,4 +1,4 @@
-import { Search, Phone, User, ShoppingCart, LogOut, LogIn } from "lucide-react";
+import { Search, Phone, User, ShoppingCart, LogOut, LogIn, ShoppingBag } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -61,6 +61,11 @@ const Header = () => {
               <DropdownMenuContent align="end">
                 <DropdownMenuItem disabled className="text-xs text-muted-foreground">
                   {user.email}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => navigate("/pedidos")} className="cursor-pointer">
+                  <ShoppingBag className="mr-2 h-4 w-4" />
+                  Meus Pedidos
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSignOut} className="text-destructive cursor-pointer">
