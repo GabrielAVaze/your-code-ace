@@ -12,9 +12,10 @@ import {
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
-import { Plus, Pencil, Trash2, ArrowLeft, Package } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Plus, Pencil, Trash2, ArrowLeft, Package, Upload, Link as LinkIcon } from "lucide-react";
+import { Link as RouterLink } from "react-router-dom";
 import { toast } from "sonner";
+import supabase from "@/lib/supabase";
 
 const emptyForm = {
   name: "", brand: "", category: "Tênis", price: 0, originalPrice: 0,
@@ -27,10 +28,13 @@ const Admin = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [editing, setEditing] = useState<string | null>(null);
   const [form, setForm] = useState(emptyForm);
+  const [imageMode, setImageMode] = useState<"url" | "upload">("url");
+  const [uploading, setUploading] = useState(false);
 
   const openNew = () => {
     setEditing(null);
     setForm(emptyForm);
+    setImageMode("url");
     setIsOpen(true);
   };
 
@@ -43,10 +47,40 @@ const Admin = () => {
       sizes: p.sizes.join(", "), colors: p.colors.join(", "),
       inStock: p.inStock, featured: p.featured, bestSeller: p.bestSeller,
     });
+    setImageMode("url");
     setIsOpen(true);
   };
 
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    const fileName = `${Date.now()}-${file.name}`;
+
+    const { error } = await supabase.storage
+      .from("products")
+      .upload(fileName, file);
+
+    if (error) {
+      toast.error("Erro ao fazer upload da imagem.");
+      setUploading(false);
+      return;
+    }
+
+    const { data } = supabase.storage
+      .from("products")
+      .getPublicUrl(fileName);
+
+    setForm((prev) => ({ ...prev, image: data.publicUrl }));
+    toast.success("Imagem enviada!");
+    setUploading(false);
+  };
+
   const handleSave = () => {
+    if (!form.name) return toast.error("Nome é obrigatório.");
+    if (!form.image) return toast.error("Adicione uma imagem.");
+
     const productData = {
       name: form.name,
       brand: form.brand,
@@ -82,9 +116,9 @@ const Admin = () => {
       <div className="border-b bg-card">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
           <div className="flex items-center gap-3">
-            <Link to="/" className="text-muted-foreground hover:text-foreground transition-colors">
+            <RouterLink to="/" className="text-muted-foreground hover:text-foreground transition-colors">
               <ArrowLeft className="h-5 w-5" />
-            </Link>
+            </RouterLink>
             <div className="flex items-center gap-2">
               <Package className="h-5 w-5" />
               <h1 className="text-lg font-bold">Painel Admin</h1>
@@ -158,10 +192,53 @@ const Admin = () => {
                 <Input value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })} />
               </div>
             </div>
+
+            {/* Imagem */}
             <div>
-              <Label>URL da Imagem</Label>
-              <Input value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} placeholder="https://..." />
+              <Label>Imagem</Label>
+              <div className="mt-1 flex gap-2">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={imageMode === "url" ? "default" : "outline"}
+                  onClick={() => setImageMode("url")}
+                >
+                  <LinkIcon className="mr-1 h-3 w-3" />
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={imageMode === "upload" ? "default" : "outline"}
+                  onClick={() => setImageMode("upload")}
+                >
+                  <Upload className="mr-1 h-3 w-3" /> Upload
+                </Button>
+              </div>
+
+              {imageMode === "url" ? (
+                <Input
+                  className="mt-2"
+                  value={form.image}
+                  onChange={(e) => setForm({ ...form, image: e.target.value })}
+                  placeholder="https://..."
+                />
+              ) : (
+                <div className="mt-2">
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleUpload}
+                    disabled={uploading}
+                  />
+                  {uploading && <p className="mt-1 text-sm text-muted-foreground">Enviando imagem...</p>}
+                </div>
+              )}
+
+              {form.image && (
+                <img src={form.image} alt="Preview" className="mt-2 h-24 w-24 rounded object-cover border" />
+              )}
             </div>
+
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
                 <Label>Preço (R$)</Label>
