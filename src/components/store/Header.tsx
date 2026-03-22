@@ -1,12 +1,29 @@
-import { Search, Phone, User, ShoppingCart } from "lucide-react";
+import { Search, Phone, User, ShoppingCart, LogOut, LogIn } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useCart } from "@/contexts/CartContext";
-import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { toast } from "sonner";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Header = () => {
   const { totalItems, setIsOpen } = useCart();
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
+
+  const handleSignOut = async () => {
+    await signOut();
+    toast.success("Você saiu da conta.");
+    navigate("/");
+  };
 
   return (
     <header className="sticky top-0 z-50 bg-primary text-primary-foreground">
@@ -30,10 +47,35 @@ const Header = () => {
             <Phone className="h-5 w-5 mb-0.5" />
             Atendimento
           </Link>
-          <Link to="/" className="hidden flex-col items-center text-xs hover:text-accent transition-colors lg:flex">
-            <User className="h-5 w-5 mb-0.5" />
-            Minha Conta
-          </Link>
+
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger className="hidden flex-col items-center text-xs hover:text-accent transition-colors lg:flex">
+                {user.user_metadata?.avatar_url ? (
+                  <img src={user.user_metadata.avatar_url} className="h-5 w-5 rounded-full mb-0.5 object-cover" />
+                ) : (
+                  <User className="h-5 w-5 mb-0.5" />
+                )}
+                {user.user_metadata?.full_name?.split(" ")[0] || "Conta"}
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem disabled className="text-xs text-muted-foreground">
+                  {user.email}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleSignOut} className="text-destructive cursor-pointer">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sair
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Link to="/login" className="hidden flex-col items-center text-xs hover:text-accent transition-colors lg:flex">
+              <LogIn className="h-5 w-5 mb-0.5" />
+              Entrar
+            </Link>
+          )}
+
           <button
             onClick={() => setIsOpen(true)}
             className="relative flex flex-col items-center text-xs hover:text-accent transition-colors"
