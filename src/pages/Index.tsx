@@ -10,6 +10,8 @@ import { Filter, X, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ProductCard from "@/components/store/ProductCard";
 import { useSearchParams } from "react-router-dom";
+import BrandsBanner from "@/components/store/BrandsBanner";
+import PromoBanner from "@/components/store/PromoBanner";
 
 const ITEMS_PER_PAGE = 8;
 
@@ -173,10 +175,12 @@ const Index = () => {
           <ProductSection title={effectiveCategory} products={filteredByBrand} />
         ) : !showProductsPanel ? (
           <>
+            <BrandsBanner />
             <div id="destaques">
-              <ProductSection title="Destaques" products={featured} />
+              <ProductSection title="Destaques" subtitle="Os mais procurados da temporada" products={featured} />
             </div>
-            <ProductSection title="Os mais vendidos" products={bestSellers} />
+            <PromoBanner />
+            <ProductSection title="Os mais vendidos" subtitle="Escolhas dos nossos clientes" products={bestSellers} />
           </>
         ) : null}
 
